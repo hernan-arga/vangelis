@@ -27,8 +27,8 @@ public class UserController {
             method = {RequestMethod.GET}
     )
     public ResponseEntity<User> getUser(@PathVariable Long id) throws Exception {
-        this.userService.prueba();
-        User user = this.userService.getUser(id);
+        User user = this.userService.prueba();
+        //User user = this.userService.getUser(id);
         return new ResponseEntity(user, HttpStatus.OK);
     }
 }

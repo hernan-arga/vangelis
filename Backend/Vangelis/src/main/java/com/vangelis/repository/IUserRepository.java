@@ -1,5 +1,7 @@
 package com.vangelis.repository;
 
+import com.vangelis.domain.User;
+
 public interface IUserRepository {
-    void prueba() throws Exception;
+    User prueba() throws Exception;
 }

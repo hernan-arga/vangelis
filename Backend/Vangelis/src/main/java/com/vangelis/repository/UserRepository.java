@@ -2,6 +2,9 @@ package com.vangelis.repository;
 
 import com.vangelis.VangelisApplication;
 import com.vangelis.domain.User;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,16 +12,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import java.util.Scanner;
+@Configuration
+public class UserRepository implements EnvironmentAware, IUserRepository {
 
-public class UserRepository implements IUserRepository {
+    private Environment environment;
     public UserRepository() {
     }
 
-    public void prueba() throws Exception {
+    @Override
+    public void setEnvironment(final Environment environment) {
+        this.environment = environment;
+    }
+    public User prueba() throws Exception {
         Properties properties = new Properties();
-        properties.load(VangelisApplication.class.getClassLoader().getResourceAsStream("application.properties"));
+        var profile = this.environment.getActiveProfiles()[0];
+        properties.load(VangelisApplication.class.getClassLoader().getResourceAsStream("application-"+profile+".properties"));
         Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties);
         Scanner scanner = new Scanner(VangelisApplication.class.getClassLoader().getResourceAsStream("schema.sql"));
         Statement statement = connection.createStatement();
@@ -30,9 +42,18 @@ public class UserRepository implements IUserRepository {
         User user = new User(1L, "Mariano Rojas", "mariano@gmail.com", "1145856996");
         insertUser(user, connection);
         user = readUser(connection);
-        user.setEmail("rojas1@gmail.com");
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute(), now.getSecond());
+        String formattedDateTime = dateTime.format(formatter);
+
+        user.setName(profile);
+        user.setEmail(formattedDateTime+"@gmail.com");
         updateUser(user, connection);
         connection.close();
+        return user;
     }
 
     private static void insertUser(User user, Connection connection) throws SQLException {

@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements IUserService {
     List<User> userList = new ArrayList();
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
     public UserService() throws Exception {
         User userA = new User(1L, "Juan Carlos", "juan@gmail.com", "1159682493");
         User userB = new User(1L, "Miguel Mineros", "miguel@gmail.com", "1129333491");
-        this.userRepository = new UserRepository();
         this.userList = List.of(userA, userB);
     }
 
@@ -28,7 +28,7 @@ public class UserService implements IUserService {
         }).collect(Collectors.toList())).get(0);
     }
 
-    public void prueba() throws Exception {
-        this.userRepository.prueba();
+    public User prueba() throws Exception {
+        return this.userRepository.prueba();
     }
 }
