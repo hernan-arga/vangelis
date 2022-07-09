@@ -1,0 +1,24 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+
+
+    <persistence-unit name="PersistenceUnit">
+        <description>Hibernate Entity Manager Provider</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://vangelis-development.database.windows.net:1433;database=vangelis-development;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;" />
+            <property name="javax.persistence.jdbc.user" value="vangelis" />
+            <property name="javax.persistence.jdbc.password" value="ProyectoFinal5308" />
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+        </properties>
+
+    </persistence-unit>
+
+</persistence>

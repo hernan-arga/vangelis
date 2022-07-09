@@ -1,7 +1,9 @@
 package com.vangelis.controller;
 
+import com.vangelis.domain.Employee;
 import com.vangelis.domain.User;
 import com.vangelis.service.IUserService;
+import com.vangelis.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +18,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/user"})
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    @Autowired
     IUserService userService;
 
     public UserController() {
+        try {
+            userService = new UserService();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @RequestMapping(
             value = {"/{id}"},
             method = {RequestMethod.GET}
     )
-    public ResponseEntity<User> getUser(@PathVariable Long id) throws Exception {
-        User user = this.userService.prueba();
+    public ResponseEntity<Employee> getUser(@PathVariable Long id) throws Exception {
+        Employee user = this.userService.prueba();
         //User user = this.userService.getUser(id);
         return new ResponseEntity(user, HttpStatus.OK);
     }

@@ -1,27 +1,35 @@
 package com.vangelis.domain;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
+
     private String name;
     private String email;
     private String phone;
 
-    public User() {
-    }
-
-    public User(Long id, String name, String email, String phone) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-    }
-
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User() {
+    }
+
+    public User(String name, String email, String phone) {
+        //this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
     }
 
     public String getName() {
