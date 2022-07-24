@@ -11,25 +11,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements IUserService {
+public class UserService implements IUserService
+{
     List<User> userList = new ArrayList();
-    UserRepository userRepository;
 
     @Autowired
-    public UserService() throws Exception {
+    UserRepository userRepository;
+
+    private void generateUserList()
+    {
         User userA = new User("Juan Carlos", "juan@gmail.com", "1159682493");
         User userB = new User( "Miguel Mineros", "miguel@gmail.com", "1129333491");
         this.userList = List.of(userA, userB);
-        this.userRepository = new UserRepository();
     }
 
-    public User getUser(long id) {
+    public User getUser(long id)
+    {
+        generateUserList();
+
         return (User)((List)this.userList.stream().filter((p) -> {
             return p.getId() == id;
         }).collect(Collectors.toList())).get(0);
     }
 
-    public Employee prueba() {
-        return this.userRepository.SaveEmployee();
+    public Employee prueba()
+    {
+        Employee emp = new Employee("Zara", "Ali", 2000);
+        userRepository.save(emp);
+        return emp;
     }
 }

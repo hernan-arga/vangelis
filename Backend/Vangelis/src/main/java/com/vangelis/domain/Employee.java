@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class Employee {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "first_name")
     private String firstName;
@@ -25,18 +25,18 @@ public class Employee {
         this.salary = salary;
     }
 
-    public Employee(int id, String firstName, String lastName, int salary) {
+    public Employee(Long id, String firstName, String lastName, int salary) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.salary = salary;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId( int id ) {
+    public void setId( Long id ) {
         this.id = id;
     }
 
