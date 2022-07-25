@@ -3,16 +3,27 @@ package com.vangelis.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "USERS_PROFILE")
+public class User
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private String name;
+    @Column(name = "user_name")
+    private String userName;
+
+    @Column(name = "user_email")
     private String email;
+
+    @Column(name = "user_phone")
     private String phone;
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name="profile_picture")
+    private byte[] profilePicture;
 
     public Long getId() {
         return id;
@@ -25,19 +36,25 @@ public class User {
     public User() {
     }
 
-    public User(String name, String email, String phone) {
-        //this.id = id;
-        this.name = name;
+    public User(String userName, String email, String phone) {
+        this.userName = userName;
         this.email = email;
         this.phone = phone;
     }
 
-    public String getName() {
-        return this.name;
+    public User(String userName, String email, String phone, byte[] profilePicture) {
+        this.userName = userName;
+        this.email = email;
+        this.phone = phone;
+        this.profilePicture = profilePicture;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setUserName(String name) {
+        this.userName = name;
     }
 
     public String getEmail() {
@@ -56,7 +73,15 @@ public class User {
         this.phone = phone;
     }
 
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
     public String toString() {
-        return "Todo{id=" + this.id + ", name='" + this.name + "', email='" + this.email + "', phone=" + this.phone + "}";
+        return "Todo{id=" + this.id + ", name='" + this.userName + "', email='" + this.email + "', phone=" + this.phone + "}";
     }
 }

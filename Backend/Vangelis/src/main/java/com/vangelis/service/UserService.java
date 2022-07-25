@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.vangelis.domain.Employee;
 import com.vangelis.domain.User;
+import com.vangelis.repository.EmployeeRepository;
 import com.vangelis.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Service;
 public class UserService implements IUserService
 {
     List<User> userList = new ArrayList();
+
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -37,7 +41,7 @@ public class UserService implements IUserService
     public Employee prueba()
     {
         Employee emp = new Employee("Zara", "Ali", 2000);
-        userRepository.save(emp);
+        employeeRepository.save(emp);
         return emp;
     }
 }
