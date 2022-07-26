@@ -2,9 +2,17 @@ package com.vangelis.service;
 
 import com.vangelis.domain.Employee;
 import com.vangelis.domain.User;
+import com.vangelis.doms.UserDom;
+import org.springframework.web.multipart.MultipartFile;
 
-public interface IUserService {
-    User getUser(long id);
+import java.io.IOException;
+import java.util.List;
 
-    Employee prueba() ;
+public interface IUserService
+{
+    List<User> getAllUsers();
+    User getUser(Long id);
+    User createUser(UserDom newUser) throws RuntimeException;
+    User updateUser(Long id, UserDom updatedUser);
+    User setAvatar (Long id, MultipartFile avatar) throws IOException;
 }

@@ -1,9 +1,11 @@
 package com.vangelis.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USERS_PROFILE")
+@Table(name = "USERS")
 public class User
 {
     @Id
@@ -11,10 +13,14 @@ public class User
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
-    @Column(name = "user_email")
+    @JsonIgnore
+    @Column(name = "user_password", nullable = false)
+    private String password;
+
+    @Column(name = "user_email", nullable = false)
     private String email;
 
     @Column(name = "user_phone")
@@ -22,8 +28,8 @@ public class User
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Column(name="profile_picture")
-    private byte[] profilePicture;
+    @Column(name = "user_avatar")
+    private byte[] userAvatar;
 
     public Long getId() {
         return id;
@@ -36,17 +42,17 @@ public class User
     public User() {
     }
 
-    public User(String userName, String email, String phone) {
+    public User(String userName, String password, String email) {
         this.userName = userName;
+        this.password = password;
         this.email = email;
-        this.phone = phone;
     }
 
-    public User(String userName, String email, String phone, byte[] profilePicture) {
+    public User(String userName, String password, String email, String phone) {
         this.userName = userName;
+        this.password = password;
         this.email = email;
         this.phone = phone;
-        this.profilePicture = profilePicture;
     }
 
     public String getUserName() {
@@ -73,12 +79,20 @@ public class User
         this.phone = phone;
     }
 
-    public byte[] getProfilePicture() {
-        return profilePicture;
+    public String getPassword() {
+        return password;
     }
 
-    public void setProfilePicture(byte[] profilePicture) {
-        this.profilePicture = profilePicture;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public byte[] getUserAvatar() {
+        return userAvatar;
+    }
+
+    public void setUserAvatar(byte[] user_avatar) {
+        this.userAvatar = user_avatar;
     }
 
     public String toString() {
