@@ -1,6 +1,5 @@
 package com.vangelis.controller;
 
-import com.vangelis.domain.Employee;
 import com.vangelis.domain.User;
 import com.vangelis.doms.UserDom;
 import com.vangelis.service.IUserService;

@@ -1,6 +1,5 @@
 package com.vangelis.service;
 
-import com.vangelis.domain.Employee;
 import com.vangelis.domain.User;
 import com.vangelis.doms.UserDom;
 import org.springframework.web.multipart.MultipartFile;

@@ -2,14 +2,10 @@ package com.vangelis.service;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.vangelis.domain.Employee;
 import com.vangelis.domain.User;
 import com.vangelis.doms.UserDom;
-import com.vangelis.repository.EmployeeRepository;
 import com.vangelis.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
