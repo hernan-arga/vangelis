@@ -1,6 +1,7 @@
 package com.vangelis.service;
 
 import com.vangelis.domain.User;
+import com.vangelis.doms.InstrumentListDom;
 import com.vangelis.doms.UserDom;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,4 +15,6 @@ public interface IUserService
     User createUser(UserDom newUser) throws RuntimeException;
     User updateUser(Long id, UserDom updatedUser);
     User setAvatar (Long id, MultipartFile avatar) throws IOException;
+    User addInstruments(Long id, InstrumentListDom instrumentList);
+    User removeInstruments(Long id, InstrumentListDom instrumentList);
 }

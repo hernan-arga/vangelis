@@ -3,6 +3,8 @@ package com.vangelis.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "USERS")
@@ -30,6 +32,9 @@ public class User
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "user_avatar")
     private byte[] userAvatar;
+
+    @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.LAZY)
+    private Set<Instrument> instruments;
 
     public Long getId() {
         return id;
@@ -93,6 +98,14 @@ public class User
 
     public void setUserAvatar(byte[] user_avatar) {
         this.userAvatar = user_avatar;
+    }
+
+    public Set<Instrument> getInstruments() {
+        return instruments;
+    }
+
+    public void setInstruments(Set<Instrument> instruments) {
+        this.instruments = instruments;
     }
 
     public String toString() {

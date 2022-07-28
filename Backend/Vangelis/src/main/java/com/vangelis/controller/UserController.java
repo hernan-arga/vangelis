@@ -1,6 +1,7 @@
 package com.vangelis.controller;
 
 import com.vangelis.domain.User;
+import com.vangelis.doms.InstrumentListDom;
 import com.vangelis.doms.UserDom;
 import com.vangelis.service.IUserService;
 import org.slf4j.Logger;
@@ -19,8 +20,11 @@ public class UserController
 {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
-    IUserService userService;
+    final IUserService userService;
+
+    public UserController(IUserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers()
@@ -28,7 +32,7 @@ public class UserController
         try
         {
             List<User> users = userService.getAllUsers();
-            return new ResponseEntity(users, HttpStatus.CREATED);
+            return new ResponseEntity(users, HttpStatus.OK);
         }
         catch(Exception e)
         {
@@ -42,7 +46,7 @@ public class UserController
         try
         {
             User user = userService.getUser(id);
-            return new ResponseEntity(user, HttpStatus.CREATED);
+            return new ResponseEntity(user, HttpStatus.OK);
         }
         catch(Exception e)
         {
@@ -85,6 +89,36 @@ public class UserController
         try
         {
             User user = userService.setAvatar(id, avatar);
+
+            return new ResponseEntity(user, HttpStatus.OK);
+        }
+        catch(Exception e)
+        {
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/{id}/instruments")
+    public ResponseEntity<User> addInstruments(@PathVariable Long id, @RequestBody InstrumentListDom instrumentList)
+    {
+        try
+        {
+            User user = userService.addInstruments(id, instrumentList);
+
+            return new ResponseEntity(user, HttpStatus.OK);
+        }
+        catch(Exception e)
+        {
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{id}/instruments")
+    public ResponseEntity<User> removeInstruments(@PathVariable Long id, @RequestBody InstrumentListDom instrumentList)
+    {
+        try
+        {
+            User user = userService.removeInstruments(id, instrumentList);
 
             return new ResponseEntity(user, HttpStatus.OK);
         }
