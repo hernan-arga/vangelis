@@ -1,10 +1,11 @@
 package com.vangelis.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
-/*
-    These Entities will be added manually to the database in order to maintain a control over which instruments are available and to maintain a sense of uniformity
-*/
+
+//These Entities will be added manually to the database in order to maintain a control over which instruments are available and to maintain a sense of uniformity
 @Entity
 @Table(name = "INTRUMENTS")
 public class Instrument
@@ -12,6 +13,7 @@ public class Instrument
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonIgnore
     private Long id;
 
     @Column(name = "instrument_name", nullable = false)

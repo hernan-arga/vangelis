@@ -33,6 +33,13 @@ public class User
     @Column(name = "user_avatar")
     private byte[] userAvatar;
 
+    @ElementCollection
+    private Set<Genre> favoriteGenres;
+
+    @ElementCollection
+    private Set<Genre> blackListGenres;
+
+
     @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.LAZY)
     private Set<Instrument> instruments;
 
@@ -106,6 +113,22 @@ public class User
 
     public void setInstruments(Set<Instrument> instruments) {
         this.instruments = instruments;
+    }
+
+    public Set<Genre> getFavoriteGenres() {
+        return favoriteGenres;
+    }
+
+    public void setFavoriteGenres(Set<Genre> favoriteGenres) {
+        this.favoriteGenres = favoriteGenres;
+    }
+
+    public Set<Genre> getBlackListGenres() {
+        return blackListGenres;
+    }
+
+    public void setBlackListGenres(Set<Genre> blackListGenres) {
+        this.blackListGenres = blackListGenres;
     }
 
     public String toString() {

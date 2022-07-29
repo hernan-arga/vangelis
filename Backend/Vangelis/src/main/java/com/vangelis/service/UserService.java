@@ -2,10 +2,14 @@ package com.vangelis.service;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import com.vangelis.domain.Genre;
 import com.vangelis.domain.Instrument;
 import com.vangelis.domain.User;
+import com.vangelis.doms.GenreListDom;
 import com.vangelis.doms.InstrumentListDom;
 import com.vangelis.doms.UserDom;
 import com.vangelis.repository.InstrumentReporitory;
@@ -115,6 +119,62 @@ public class UserService implements IUserService {
 
         User user = userRepository.findById(id).orElseThrow();
         user.getInstruments().removeAll(instruments);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    public User addGenresToFavourites(Long id, List<String> genreList)
+    {
+        if(genreList.size() == 0) throw new RuntimeException("Must atleast send one Genre");
+
+        List<Genre> genres = new ArrayList<>();
+        genreList.forEach(g -> genres.add(Genre.valueOf(g)));
+
+        User user = userRepository.findById(id).orElseThrow();
+        user.getFavoriteGenres().addAll(genres);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    public User removeGenresFromFavourites(Long id, List<String> genreList)
+    {
+        if(genreList.size() == 0) throw new RuntimeException("Must atleast send one Genre");
+
+        List<Genre> genres = new ArrayList<>();
+        genreList.forEach(g -> genres.add(Genre.valueOf(g)));
+
+        User user = userRepository.findById(id).orElseThrow();
+        user.getFavoriteGenres().removeAll(genres);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    public User addGenresToBlackList(Long id, List<String> genreList)
+    {
+        if(genreList.size() == 0) throw new RuntimeException("Must atleast send one Genre");
+
+        List<Genre> genres = new ArrayList<>();
+        genreList.forEach(g -> genres.add(Genre.valueOf(g)));
+
+        User user = userRepository.findById(id).orElseThrow();
+        user.getBlackListGenres().addAll(genres);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    public User removeGenresFromBlackList(Long id, List<String> genreList)
+    {
+        if(genreList.size() == 0) throw new RuntimeException("Must atleast send one Genre");
+
+        List<Genre> genres = new ArrayList<>();
+        genreList.forEach(g -> genres.add(Genre.valueOf(g)));
+
+        User user = userRepository.findById(id).orElseThrow();
+        user.getBlackListGenres().removeAll(genres);
         userRepository.save(user);
 
         return user;
