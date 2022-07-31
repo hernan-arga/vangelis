@@ -4,16 +4,15 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.vangelis.domain.Genre;
 import com.vangelis.domain.Instrument;
 import com.vangelis.domain.User;
-import com.vangelis.doms.GenreListDom;
 import com.vangelis.doms.InstrumentListDom;
 import com.vangelis.doms.UserDom;
 import com.vangelis.repository.InstrumentReporitory;
 import com.vangelis.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,9 +32,17 @@ public class UserService implements IUserService {
         this.instrumentReporitory = instrumentReporitory;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getAllUsers(int page, int limit) {
+        return userRepository.findAll(PageRequest.of(page, limit)).getContent();
     }
+
+    public List<User> getAllUsersByInstrument(List<Long> instruments, int page, int limit)
+    {return userRepository.getUsersByInstrument(instruments, PageRequest.of(page, limit));}
+
+    public List<User> getAllUsersByGenre(List<Long> genres, int page, int limit) {return userRepository.getUsersByGenre(genres, PageRequest.of(page, limit));}
+
+    public List<User> getAllUsersByInstrumentAndGenre(List<Long> instruments, List<Long> genres, int page, int limit)
+    {return userRepository.getUsersByInstrumentAndGenre(instruments, genres, PageRequest.of(page, limit));}
 
     public User getUser(Long id) {
         User user = userRepository.findById(id).orElseThrow();

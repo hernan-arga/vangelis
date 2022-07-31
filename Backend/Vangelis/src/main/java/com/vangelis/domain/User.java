@@ -131,7 +131,8 @@ public class User
         this.blackListGenres = blackListGenres;
     }
 
+    //TODO
     public String toString() {
-        return "Todo{id=" + this.id + ", name='" + this.userName + "', email='" + this.email + "', phone=" + this.phone + "}";
+        return "{id=" + this.id + ", name='" + this.userName + "', email='" + this.email + "', phone=" + this.phone + "}";
     }
 }

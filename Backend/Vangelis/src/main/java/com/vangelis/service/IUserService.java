@@ -10,7 +10,10 @@ import java.util.List;
 
 public interface IUserService
 {
-    List<User> getAllUsers();
+    List<User> getAllUsers(int page, int limit);
+    List<User> getAllUsersByInstrument(List<Long> instruments, int page, int limit);
+    List<User> getAllUsersByGenre(List<Long> genres, int page, int limit);
+    List<User> getAllUsersByInstrumentAndGenre(List<Long> instruments, List<Long> genres, int page, int limit);
     User getUser(Long id);
     User createUser(UserDom newUser) throws RuntimeException;
     User updateUser(Long id, UserDom updatedUser);
