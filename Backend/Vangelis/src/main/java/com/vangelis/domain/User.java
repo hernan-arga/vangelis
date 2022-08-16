@@ -1,14 +1,22 @@
 package com.vangelis.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "USERS")
-public class User
+@Data
+@NoArgsConstructor
+public class User implements UserDetails
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,20 +47,8 @@ public class User
     @ElementCollection
     private Set<Genre> blackListGenres;
 
-
     @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.LAZY)
     private Set<Instrument> instruments;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User() {
-    }
 
     public User(String userName, String password, String email) {
         this.userName = userName;
@@ -67,68 +63,38 @@ public class User
         this.phone = phone;
     }
 
-    public String getUserName() {
-        return this.userName;
-    }
-
-    public void setUserName(String name) {
-        this.userName = name;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return this.phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new ArrayList<>();
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public String getUsername() {
+        return userName;
     }
 
-    public byte[] getUserAvatar() {
-        return userAvatar;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setUserAvatar(byte[] user_avatar) {
-        this.userAvatar = user_avatar;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public Set<Instrument> getInstruments() {
-        return instruments;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public void setInstruments(Set<Instrument> instruments) {
-        this.instruments = instruments;
-    }
-
-    public Set<Genre> getFavoriteGenres() {
-        return favoriteGenres;
-    }
-
-    public void setFavoriteGenres(Set<Genre> favoriteGenres) {
-        this.favoriteGenres = favoriteGenres;
-    }
-
-    public Set<Genre> getBlackListGenres() {
-        return blackListGenres;
-    }
-
-    public void setBlackListGenres(Set<Genre> blackListGenres) {
-        this.blackListGenres = blackListGenres;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     //TODO

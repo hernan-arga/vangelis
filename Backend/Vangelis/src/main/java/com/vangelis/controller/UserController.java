@@ -81,20 +81,6 @@ public class UserController
         }
     }
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody UserDom newUser)
-    {
-        try
-        {
-            User user = userService.createUser(newUser);
-            return new ResponseEntity(user, HttpStatus.CREATED);
-        }
-        catch(Exception e)
-        {
-            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserDom modifiedUser)
     {

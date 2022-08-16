@@ -8,10 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>
 {
+    Optional<User> findByUserName(String userName);
+
     Page<User> findAll(Pageable pageable);
 
     @Query(value = "SELECT * FROM USERS WHERE id IN (SELECT user_id FROM USERS_INSTRUMENTS WHERE instruments_id in ?1)", nativeQuery = true)
