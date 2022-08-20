@@ -1,5 +1,6 @@
-package com.vangelis.security;
+package com.vangelis.security.jwt;
 
+import com.vangelis.service.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

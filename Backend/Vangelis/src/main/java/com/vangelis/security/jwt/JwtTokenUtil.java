@@ -1,4 +1,4 @@
-package com.vangelis.security;
+package com.vangelis.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

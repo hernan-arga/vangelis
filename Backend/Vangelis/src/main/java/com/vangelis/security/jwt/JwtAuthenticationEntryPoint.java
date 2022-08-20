@@ -1,4 +1,4 @@
-package com.vangelis.security;
+package com.vangelis.security.jwt;
 
 import java.io.IOException;
 import java.io.Serializable;

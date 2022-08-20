@@ -1,4 +1,4 @@
-package com.vangelis.security;
+package com.vangelis.doms;
 
 import java.io.Serializable;
 

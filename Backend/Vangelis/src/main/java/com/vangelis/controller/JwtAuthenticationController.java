@@ -1,14 +1,17 @@
-package com.vangelis.security;
+package com.vangelis.controller;
 
 import com.vangelis.domain.User;
 import com.vangelis.doms.UserDom;
+import com.vangelis.doms.JwtRequest;
+import com.vangelis.doms.JwtResponse;
+import com.vangelis.security.jwt.JwtTokenUtil;
+import com.vangelis.service.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -41,7 +44,13 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> saveUser(@RequestBody UserDom user) throws Exception
     {
-        userDetailsService.save(user);
+        try
+        {
+            userDetailsService.save(user);
+        }catch (RuntimeException e)
+        {
+            return ResponseEntity.badRequest().body(e);
+        }
 
         return createAuthenticationToken(new JwtRequest(user.getUserName(), user.getPassword()));
     }

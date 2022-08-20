@@ -1,4 +1,4 @@
-package com.vangelis.security;
+package com.vangelis.service;
 
 import com.vangelis.domain.User;
 import com.vangelis.doms.UserDom;
@@ -20,6 +20,9 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
     private PasswordEncoder bcryptEncoder;
 
+    @Autowired
+    private IUserService userService;
+
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException
     {
@@ -31,8 +34,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     public User save(UserDom userDom)
     {
-        User newUser = new User(userDom.getUserName(), bcryptEncoder.encode(userDom.getPassword()), userDom.getEmail(), userDom.getPhone());
-        userRepository.save(newUser);
+        User newUser = userService.createUser(userDom);
 
         return newUser;
     }
