@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SuggestionsRepository extends JpaRepository<Suggestion, Long> {
+public interface SuggestionsRepository extends JpaRepository<Suggestion, Long>
+{
     List<Suggestion> findSuggestionsByType(String type);
 }

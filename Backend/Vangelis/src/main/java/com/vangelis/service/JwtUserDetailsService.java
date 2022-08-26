@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class JwtUserDetailsService implements UserDetailsService {
-
+public class JwtUserDetailsService implements UserDetailsService
+{
     @Autowired
     private UserRepository userRepository;
 
@@ -21,7 +21,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     private PasswordEncoder bcryptEncoder;
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException

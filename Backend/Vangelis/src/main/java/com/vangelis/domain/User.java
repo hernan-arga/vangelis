@@ -33,19 +33,16 @@ public class User implements UserDetails
     @Column(name = "user_email", nullable = false)
     private String email;
 
-    @Column(name = "user_phone")
-    private String phone;
-
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "user_avatar")
     private byte[] userAvatar;
 
-    @ElementCollection
-    private Set<Genre> favoriteGenres;
+    @Column(name = "user_bio", length = 300)
+    private String bio;
 
-    @ElementCollection
-    private Set<Genre> blackListGenres;
+    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY)
+    private Set<Genre> favoriteGenres;
 
     @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.LAZY)
     private Set<Instrument> instruments;
@@ -54,13 +51,6 @@ public class User implements UserDetails
         this.userName = userName;
         this.password = password;
         this.email = email;
-    }
-
-    public User(String userName, String password, String email, String phone) {
-        this.userName = userName;
-        this.password = password;
-        this.email = email;
-        this.phone = phone;
     }
 
     @Override
@@ -105,6 +95,6 @@ public class User implements UserDetails
 
     //TODO
     public String toString() {
-        return "{id=" + this.id + ", name='" + this.userName + "', email='" + this.email + "', phone=" + this.phone + "}";
+        return "{id=" + this.id + ", name='" + this.userName + "', email='" + this.email + "'" + "}";
     }
 }

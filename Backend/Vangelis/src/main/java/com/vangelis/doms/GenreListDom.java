@@ -1,19 +1,13 @@
 package com.vangelis.doms;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@Data @NoArgsConstructor @AllArgsConstructor
 public class GenreListDom
 {
-    private List<String> genres;
-
-    public GenreListDom() {
-    }
-
-    public List<String> getGenres() {
-        return genres;
-    }
-
-    public void setGenres(List<String> genres) {
-        this.genres = genres;
-    }
+    private List<Long> genres;
 }

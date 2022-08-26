@@ -1,7 +1,7 @@
 package com.vangelis.controller;
 
 import com.vangelis.domain.Instrument;
-import com.vangelis.repository.InstrumentReporitory;
+import com.vangelis.repository.InstrumentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +15,11 @@ import java.util.List;
 @RequestMapping("/instruments")
 public class InstrumentController
 {
-    final InstrumentReporitory instrumentReporitory;
+    final InstrumentRepository instrumentRepository;
 
-    public InstrumentController(InstrumentReporitory instrumentReporitory)
+    public InstrumentController(InstrumentRepository instrumentRepository)
     {
-        this.instrumentReporitory = instrumentReporitory;
+        this.instrumentRepository = instrumentRepository;
     }
 
     @GetMapping
@@ -27,7 +27,7 @@ public class InstrumentController
     {
         try
         {
-            List<Instrument> instruments = instrumentReporitory.findAll();
+            List<Instrument> instruments = instrumentRepository.findAll();
             return new ResponseEntity(instruments, HttpStatus.OK);
         }catch (Exception e)
         {
@@ -40,7 +40,7 @@ public class InstrumentController
     {
         try
         {
-            Instrument instrument = instrumentReporitory.findById(id).orElseThrow();
+            Instrument instrument = instrumentRepository.findById(id).orElseThrow();
             return new ResponseEntity(instrument, HttpStatus.OK);
         }catch (Exception e)
         {

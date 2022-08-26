@@ -1,53 +1,58 @@
 package com.vangelis.service;
 
-import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.vangelis.domain.Genre;
 import com.vangelis.domain.Instrument;
 import com.vangelis.domain.User;
-import com.vangelis.doms.InstrumentListDom;
+import com.vangelis.doms.ErrorResponse;
 import com.vangelis.doms.UserDom;
-import com.vangelis.repository.InstrumentReporitory;
+import com.vangelis.repository.GenreRepository;
+import com.vangelis.repository.InstrumentRepository;
 import com.vangelis.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
-public class UserService implements IUserService {
-    final UserRepository userRepository;
-    final InstrumentReporitory instrumentReporitory;
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+@Service
+public class UserService
+{
+    final UserRepository userRepository;
+    final InstrumentRepository instrumentRepository;
+    final GenreRepository genreRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserService(UserRepository userRepository, InstrumentReporitory instrumentReporitory) {
+    public UserService(UserRepository userRepository, InstrumentRepository instrumentRepository, GenreRepository genreRepository)
+    {
         int strength = 10;
         bCryptPasswordEncoder = new BCryptPasswordEncoder(strength, new SecureRandom());
 
         this.userRepository = userRepository;
-        this.instrumentReporitory = instrumentReporitory;
+        this.instrumentRepository = instrumentRepository;
+        this.genreRepository = genreRepository;
     }
 
-    public List<User> getAllUsers(int page, int limit) {
-        return userRepository.findAll(PageRequest.of(page, limit)).getContent();
+    public List<User> getAllUsers(List<Long> instruments, List<Long> genres, int page, int limit)
+    {
+        if(instruments == null && genres == null) return userRepository.findAll(PageRequest.of(page, limit)).getContent();
+
+        if(instruments == null) instruments = instrumentRepository.getAllIds();
+        if(genres == null) genres = genreRepository.getAllIds();
+
+        return userRepository.findAllFiltered(instruments, genres, PageRequest.of(page, limit)).getContent();
     }
 
-    public List<User> getAllUsersByInstrument(List<Long> instruments, int page, int limit)
-    {return userRepository.getUsersByInstrument(instruments, PageRequest.of(page, limit));}
-
-    public List<User> getAllUsersByGenre(List<Long> genres, int page, int limit) {return userRepository.getUsersByGenre(genres, PageRequest.of(page, limit));}
-
-    public List<User> getAllUsersByInstrumentAndGenre(List<Long> instruments, List<Long> genres, int page, int limit)
-    {return userRepository.getUsersByInstrumentAndGenre(instruments, genres, PageRequest.of(page, limit));}
-
-    public User getUser(Long id) {
+    public User getUser(Long id)
+    {
         User user = userRepository.findById(id).orElseThrow();
         return user;
     }
@@ -55,43 +60,23 @@ public class UserService implements IUserService {
     public User createUser(UserDom newUser) throws RuntimeException
     {
         if (newUser.getUserName() == null)
-            throw new RuntimeException("Username must not be empty");
+            throw new ErrorResponse("U001", "Bad Request", "Username must not be empty", new Date());
 
         if (newUser.getPassword() == null)
-            throw new RuntimeException("Password must not be empty");
+            throw new ErrorResponse("U002", "Bad Request", "Password must not be empty", new Date());
 
         if (newUser.getEmail() == null)
-            throw new RuntimeException("Email must not be empty");
+            throw new ErrorResponse("U003", "Bad Request", "Email must not be empty", new Date());
 
         if(!validateUsername(newUser.getUserName()))
-            throw new RuntimeException("Invalid username");
+            throw new ErrorResponse("U004", "Invalid username", "Username does not comply with naming policies", new Date());
 
         if (!validatePassword(newUser.getPassword()))
-            throw new RuntimeException("Password does not comply with security standards");
+            throw new ErrorResponse("U005", "Invalid password", "Password does not comply with security standards", new Date());
 
         String encodedPassword = bCryptPasswordEncoder.encode(newUser.getPassword());
 
-        User user = new User(newUser.getUserName(), encodedPassword, newUser.getEmail(), newUser.getPhone());
-        userRepository.save(user);
-
-        return user;
-    }
-
-    public User updateUser(Long id, UserDom updatedUser)
-    {
-        User user = userRepository.findById(id).orElseThrow();
-
-        if (updatedUser.getUserName() != null && validateUsername(updatedUser.getUserName()))
-            user.setUserName(updatedUser.getUserName());
-
-        if (updatedUser.getPassword() != null && validatePassword(updatedUser.getPassword()))
-            user.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
-
-        if (updatedUser.getEmail() != null) user.setEmail(updatedUser.getEmail());
-
-        if (updatedUser.getPhone() != null) user.setPhone(updatedUser.getPhone());
-
-
+        User user = new User(newUser.getUserName(), encodedPassword, newUser.getEmail());
         userRepository.save(user);
 
         return user;
@@ -106,11 +91,11 @@ public class UserService implements IUserService {
         The dot (.), underscore (_), or hyphen (-) does not appear consecutively, e.g., java..regex
         The number of characters must be between 5 and 20.
     */
-    private boolean validateUsername(String username)
+    public boolean validateUsername(String username)
     {
         Optional<User> user = userRepository.findByUserName(username);
 
-        if(user.isPresent()) throw new RuntimeException("Username already exists");
+        if(user.isPresent()) throw new ErrorResponse("U006", "Invalid username", "Username already exists", new Date());
 
         String USERNAME_PATTERN = "^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$";
 
@@ -120,7 +105,7 @@ public class UserService implements IUserService {
 
         if(matcher.matches()) return true;
 
-        throw new RuntimeException("Invalid username");
+        throw new ErrorResponse("U007", "Invalid username", "Username does not comply with naming policies", new Date());
     }
 
     /*
@@ -131,7 +116,7 @@ public class UserService implements IUserService {
         Password must contain at least one special character like ! @ # & ( ).
         Password must contain a length of at least 8 characters and a maximum of 20 characters.
     */
-    private boolean validatePassword(String password)
+    public boolean validatePassword(String password)
     {
         String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–_[{}]:;',?/*~$^+=<>]).{8,20}$";
 
@@ -142,10 +127,11 @@ public class UserService implements IUserService {
         return matcher.matches();
     }
 
-    public User setAvatar(Long id, MultipartFile avatar) throws IOException {
-        if (avatar.isEmpty()) throw new RuntimeException("Avatar must not be empty");
+    public User setAvatar(MultipartFile avatar) throws IOException
+    {
+        if (avatar.isEmpty()) throw new ErrorResponse("U008", "Bad Request", "Avatar must not be empty", new Date());
 
-        User user = userRepository.findById(id).orElseThrow();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         user.setUserAvatar(avatar.getBytes());
 
@@ -154,82 +140,48 @@ public class UserService implements IUserService {
         return user;
     }
 
-    public User addInstruments(Long id, InstrumentListDom instrumentList) {
-        List<Instrument> instruments = instrumentReporitory.findAllById(instrumentList.getInstrumentList());
-        if (instruments.size() == 0) throw new RuntimeException("None Instrument Found");
+    public User setInstruments(List<Long> instrumentList)
+    {
+        List<Instrument> instruments = instrumentRepository.findAllById(instrumentList);
 
-        User user = userRepository.findById(id).orElseThrow();
-        user.getInstruments().addAll(instruments);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        user.setInstruments(Set.copyOf(instruments));
         userRepository.save(user);
-
         return user;
     }
 
-    public User removeInstruments(Long id, InstrumentListDom instrumentList)
+    public User setFavouriteGenres(List<Long> genreList)
     {
-        List<Instrument> instruments = instrumentReporitory.findAllById(instrumentList.getInstrumentList());
-        if (instruments.size() == 0) throw new RuntimeException("None Instrument Found");
+        List<Genre> genres = genreRepository.findAllById(genreList);
 
-        User user = userRepository.findById(id).orElseThrow();
-        user.getInstruments().removeAll(instruments);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        user.setFavoriteGenres(Set.copyOf(genres));
         userRepository.save(user);
-
         return user;
     }
 
-    public User addGenresToFavourites(Long id, List<String> genreList)
+    public User editUser(String username, String password, String bio)
     {
-        if(genreList.size() == 0) throw new RuntimeException("Must atleast send one Genre");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<Genre> genres = new ArrayList<>();
-        genreList.forEach(g -> genres.add(Genre.valueOf(g)));
+        if(username != null)
+        {
+            validateUsername(username);
+            user.setUserName(username);
+        }
 
-        User user = userRepository.findById(id).orElseThrow();
-        user.getFavoriteGenres().addAll(genres);
+        if(password != null && validatePassword(password))
+        {
+            String encodedPassword = bCryptPasswordEncoder.encode(password);
+            user.setPassword(encodedPassword);
+        }
+
+        if(bio != null)
+        {
+            user.setBio(bio);
+        }
+
         userRepository.save(user);
-
-        return user;
-    }
-
-    public User removeGenresFromFavourites(Long id, List<String> genreList)
-    {
-        if(genreList.size() == 0) throw new RuntimeException("Must atleast send one Genre");
-
-        List<Genre> genres = new ArrayList<>();
-        genreList.forEach(g -> genres.add(Genre.valueOf(g)));
-
-        User user = userRepository.findById(id).orElseThrow();
-        user.getFavoriteGenres().removeAll(genres);
-        userRepository.save(user);
-
-        return user;
-    }
-
-    public User addGenresToBlackList(Long id, List<String> genreList)
-    {
-        if(genreList.size() == 0) throw new RuntimeException("Must atleast send one Genre");
-
-        List<Genre> genres = new ArrayList<>();
-        genreList.forEach(g -> genres.add(Genre.valueOf(g)));
-
-        User user = userRepository.findById(id).orElseThrow();
-        user.getBlackListGenres().addAll(genres);
-        userRepository.save(user);
-
-        return user;
-    }
-
-    public User removeGenresFromBlackList(Long id, List<String> genreList)
-    {
-        if(genreList.size() == 0) throw new RuntimeException("Must atleast send one Genre");
-
-        List<Genre> genres = new ArrayList<>();
-        genreList.forEach(g -> genres.add(Genre.valueOf(g)));
-
-        User user = userRepository.findById(id).orElseThrow();
-        user.getBlackListGenres().removeAll(genres);
-        userRepository.save(user);
-
         return user;
     }
 }

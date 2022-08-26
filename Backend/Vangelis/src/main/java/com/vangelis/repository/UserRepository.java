@@ -15,14 +15,8 @@ public interface UserRepository extends JpaRepository<User, Long>
 {
     Optional<User> findByUserName(String userName);
 
+    @Query(value = "SELECT * FROM users WHERE (id IN (SELECT user_id FROM users_instruments WHERE instruments_id in ?1)) AND (id IN (SELECT user_id FROM users_favorite_genres WHERE favorite_genres_id in ?2))", nativeQuery = true)
+    Page<User> findAllFiltered(List<Long> instruments, List<Long> genres, Pageable pageable);
+
     Page<User> findAll(Pageable pageable);
-
-    @Query(value = "SELECT * FROM USERS WHERE id IN (SELECT user_id FROM USERS_INSTRUMENTS WHERE instruments_id in ?1)", nativeQuery = true)
-    List<User> getUsersByInstrument(List<Long> instruments, Pageable pageable);
-
-    @Query(value = "SELECT * FROM USERS WHERE id IN (SELECT user_id FROM USER_FAVORITE_GENRES WHERE favorite_genres in ?1)", nativeQuery = true)
-    List<User> getUsersByGenre(List<Long> genres, Pageable pageable);
-
-    @Query(value = "SELECT * FROM USERS WHERE id IN (SELECT user_id FROM USERS_INSTRUMENTS WHERE instruments_id in ?1) AND id IN (SELECT user_id FROM USER_FAVORITE_GENRES WHERE favorite_genres in ?2)", nativeQuery = true)
-    List<User> getUsersByInstrumentAndGenre(List<Long> instruments, List<Long> genres, Pageable pageable);
 }
