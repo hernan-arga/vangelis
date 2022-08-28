@@ -1,19 +1,20 @@
 package com.vangelis.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 
 //These Entities will be added manually to the database in order to maintain a control over which instruments are available and to maintain a sense of uniformity
 @Entity
 @Table(name = "INSTRUMENTS")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class Instrument
 {
     @Id
@@ -28,10 +29,19 @@ public class Instrument
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "instrument_icon")
+    @ToString.Exclude
     private byte[] icon;
 
-    public Instrument(String name, byte[] icon) {
-        this.name = name;
-        this.icon = icon;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Instrument that = (Instrument) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

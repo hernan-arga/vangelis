@@ -28,88 +28,104 @@ public class UserController
     public ResponseEntity<List<User>> getAllUsers(
             @RequestParam(value = "instruments", required = false) List<Long> instruments,
             @RequestParam(value = "genres", required = false) List<Long> genres,
+            @RequestParam(value = "username", required = false) String userName,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "limit", required = false) Integer limit)
     {
         if(page == null) page = 0;
         if(limit == null) limit = 25;
+        if(userName == null) userName = "";
 
-        List<User> users = userService.getAllUsers(instruments, genres, page, limit);
+        List<User> users = userService.getAllUsers(instruments, genres, userName, page, limit);
 
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser()
+    {
+        try
+        {
+            User user = userService.getCurrentUser();
+            return ResponseEntity.ok(user);
+        }
+        catch(Exception e)
+        {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<List<User>> getUserById(@PathVariable Long id)
+    public ResponseEntity<?> getUserById(@PathVariable Long id)
     {
         try
         {
             User user = userService.getUser(id);
-            return new ResponseEntity(user, HttpStatus.OK);
+            return ResponseEntity.ok(user);
         }
         catch(Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(e);
         }
     }
 
     @PatchMapping("/avatars")
-    public ResponseEntity<User> setUserAvatar(@RequestParam("file") MultipartFile avatar)
+    public ResponseEntity<?> setUserAvatar(@RequestParam("file") MultipartFile avatar)
     {
         try
         {
             User user = userService.setAvatar(avatar);
 
-            return new ResponseEntity(user, HttpStatus.OK);
+            return ResponseEntity.ok(user);
         }
         catch(Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(e);
         }
     }
 
     @PatchMapping("/instruments")
-    public ResponseEntity<User> addInstruments(@RequestBody InstrumentListDom instrumentList)
+    public ResponseEntity<?> addInstruments(@RequestBody InstrumentListDom instrumentList)
     {
         try
         {
             User user = userService.setInstruments(instrumentList.getInstrumentList());
 
-            return new ResponseEntity(user, HttpStatus.OK);
+            return ResponseEntity.ok(user);
         }
         catch(Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(e);
         }
     }
 
     @PatchMapping("/genres")
-    public ResponseEntity<User> addGenresToFavourites(@RequestBody GenreListDom genreList)
+    public ResponseEntity<?> addGenresToFavourites(@RequestBody GenreListDom genreList)
     {
         try
         {
             User user = userService.setFavouriteGenres(genreList.getGenres());
 
-            return new ResponseEntity(user, HttpStatus.OK);
+            return ResponseEntity.ok(user);
         }
         catch(Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(e);
         }
     }
 
     @PatchMapping
-    public ResponseEntity<User> editUser(@RequestBody UserDom userDom)
+    public ResponseEntity<?> editUser(@RequestBody UserDom userDom)
     {
         try
         {
             User user = userService.editUser(userDom.getUserName(), userDom.getPassword(), userDom.getBio());
 
-            return new ResponseEntity(user, HttpStatus.OK);
+            return ResponseEntity.ok(user);
         }
         catch(Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(e);
         }
     }
 }

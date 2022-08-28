@@ -23,21 +23,13 @@ import static org.mockito.Mockito.doReturn;
 
 public class AuthTests
 {
-    UserRepository userRepository = Mockito.mock(UserRepository.class);
-    InstrumentRepository instrumentRepository = Mockito.mock(InstrumentRepository.class);
-    GenreRepository genreRepository = Mockito.mock(GenreRepository.class);
-    UserService userService = new UserService(userRepository, instrumentRepository, genreRepository);
+    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private final InstrumentRepository instrumentRepository = Mockito.mock(InstrumentRepository.class);
+    private final GenreRepository genreRepository = Mockito.mock(GenreRepository.class);
+    private final UserService userService = new UserService(userRepository, instrumentRepository, genreRepository);
 
     @InjectMocks
     private UserController userController;
-
-    private MockMvc mockMvc;
-
-    @BeforeAll
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
-    }
     
     @Test
     @WithAnonymousUser

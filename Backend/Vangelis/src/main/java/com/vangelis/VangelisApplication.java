@@ -9,7 +9,8 @@ public class VangelisApplication {
     public VangelisApplication() {
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
         SpringApplication.run(VangelisApplication.class, args);
     }
 

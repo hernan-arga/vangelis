@@ -1,9 +1,7 @@
 package com.vangelis.controller;
 
 import com.vangelis.domain.Genre;
-import com.vangelis.domain.Instrument;
 import com.vangelis.repository.GenreRepository;
-import com.vangelis.repository.InstrumentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,28 +23,28 @@ public class GenreController
     }
 
     @GetMapping
-    public ResponseEntity<List<Genre>> getAll()
+    public ResponseEntity<?> getAll()
     {
         try
         {
             List<Genre> genres = genreRepository.findAll();
-            return new ResponseEntity(genres, HttpStatus.OK);
+            return new ResponseEntity<>(genres, HttpStatus.OK);
         }catch (Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Genre> getOne(@PathVariable Long id)
+    public ResponseEntity<?> getOne(@PathVariable Long id)
     {
         try
         {
             Genre genres = genreRepository.findById(id).orElseThrow();
-            return new ResponseEntity(genres, HttpStatus.OK);
+            return new ResponseEntity<>(genres, HttpStatus.OK);
         }catch (Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e, HttpStatus.NOT_FOUND);
         }
     }
 }

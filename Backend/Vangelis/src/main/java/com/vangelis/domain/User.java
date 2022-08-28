@@ -1,21 +1,22 @@
 package com.vangelis.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "USERS")
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class User implements UserDetails
 {
     @Id
@@ -36,20 +37,22 @@ public class User implements UserDetails
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "user_avatar")
+    @ToString.Exclude
     private byte[] userAvatar;
 
     @Column(name = "user_bio", length = 300)
     private String bio;
 
-    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.EAGER)
     private Set<Genre> favoriteGenres;
 
-    @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.EAGER)
     private Set<Instrument> instruments;
 
-    public User(String userName, String password, String email) {
+    public User(String userName, String encodedPassword, String email)
+    {
         this.userName = userName;
-        this.password = password;
+        this.password = encodedPassword;
         this.email = email;
     }
 
@@ -93,8 +96,20 @@ public class User implements UserDetails
         return true;
     }
 
-    //TODO
     public String toString() {
         return "{id=" + this.id + ", name='" + this.userName + "', email='" + this.email + "'" + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

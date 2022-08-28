@@ -61,18 +61,18 @@ public class SuggestionsController
     @GetMapping
     public ResponseEntity<List<Suggestion>> getAll()
     {
-        return new ResponseEntity(suggestionsRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(suggestionsRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/instruments")
     public ResponseEntity<List<Suggestion>> getAllInstrumentSuggestions()
     {
-        return new ResponseEntity(suggestionsRepository.findSuggestionsByType("INSTRUMENT"), HttpStatus.OK);
+        return new ResponseEntity<>(suggestionsRepository.findSuggestionsByType("INSTRUMENT"), HttpStatus.OK);
     }
 
     @GetMapping("/genres")
     public ResponseEntity<List<Suggestion>> getAllGenreSuggestions()
     {
-        return new ResponseEntity(suggestionsRepository.findSuggestionsByType("GENRE"), HttpStatus.OK);
+        return new ResponseEntity<>(suggestionsRepository.findSuggestionsByType("GENRE"), HttpStatus.OK);
     }
 }

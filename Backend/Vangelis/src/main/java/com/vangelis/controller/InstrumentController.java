@@ -23,28 +23,28 @@ public class InstrumentController
     }
 
     @GetMapping
-    public ResponseEntity<List<Instrument>> getAll()
+    public ResponseEntity<?> getAll()
     {
         try
         {
             List<Instrument> instruments = instrumentRepository.findAll();
-            return new ResponseEntity(instruments, HttpStatus.OK);
+            return new ResponseEntity<>(instruments, HttpStatus.OK);
         }catch (Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Instrument> getOne(@PathVariable Long id)
+    public ResponseEntity<?> getOne(@PathVariable Long id)
     {
         try
         {
             Instrument instrument = instrumentRepository.findById(id).orElseThrow();
-            return new ResponseEntity(instrument, HttpStatus.OK);
+            return new ResponseEntity<>(instrument, HttpStatus.OK);
         }catch (Exception e)
         {
-            return new ResponseEntity(e, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e, HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -26,10 +26,10 @@ import java.util.regex.Pattern;
 @Service
 public class UserService
 {
-    final UserRepository userRepository;
-    final InstrumentRepository instrumentRepository;
-    final GenreRepository genreRepository;
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
+    private final InstrumentRepository instrumentRepository;
+    private final GenreRepository genreRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public UserService(UserRepository userRepository, InstrumentRepository instrumentRepository, GenreRepository genreRepository)
     {
@@ -41,20 +41,24 @@ public class UserService
         this.genreRepository = genreRepository;
     }
 
-    public List<User> getAllUsers(List<Long> instruments, List<Long> genres, int page, int limit)
+    public List<User> getAllUsers(List<Long> instruments, List<Long> genres, String userName, int page, int limit)
     {
-        if(instruments == null && genres == null) return userRepository.findAll(PageRequest.of(page, limit)).getContent();
+        if(instruments == null && genres == null) return userRepository.findAllByUserName(userName, PageRequest.of(page, limit)).getContent();
 
         if(instruments == null) instruments = instrumentRepository.getAllIds();
         if(genres == null) genres = genreRepository.getAllIds();
 
-        return userRepository.findAllFiltered(instruments, genres, PageRequest.of(page, limit)).getContent();
+        return userRepository.findAllFiltered(instruments, genres, userName, PageRequest.of(page, limit)).getContent();
+    }
+
+    public User getCurrentUser()
+    {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public User getUser(Long id)
     {
-        User user = userRepository.findById(id).orElseThrow();
-        return user;
+        return userRepository.findById(id).orElseThrow();
     }
 
     public User createUser(UserDom newUser) throws RuntimeException

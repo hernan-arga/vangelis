@@ -1,13 +1,11 @@
 package com.vangelis.doms;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
-@Data @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @RequiredArgsConstructor @AllArgsConstructor
 public class ErrorResponse extends RuntimeException
 {
     private String code;
