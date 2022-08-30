@@ -16,10 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,9 +48,9 @@ public class UserService
         return userRepository.findAllFiltered(instruments, genres, userName, PageRequest.of(page, limit)).getContent();
     }
 
-    public User getCurrentUser()
+    public User getCurrentUser(String userName)
     {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUserName(userName).orElseThrow();
     }
 
     public User getUser(Long id)
@@ -131,11 +128,9 @@ public class UserService
         return matcher.matches();
     }
 
-    public User setAvatar(MultipartFile avatar) throws IOException
+    public User setAvatar(User user, MultipartFile avatar) throws IOException
     {
         if (avatar.isEmpty()) throw new ErrorResponse("U008", "Bad Request", "Avatar must not be empty", new Date());
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         user.setUserAvatar(avatar.getBytes());
 
@@ -144,30 +139,27 @@ public class UserService
         return user;
     }
 
-    public User setInstruments(List<Long> instrumentList)
+    public User setInstruments(User user, List<Long> instrumentList)
     {
         List<Instrument> instruments = instrumentRepository.findAllById(instrumentList);
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        user.setInstruments(Set.copyOf(instruments));
+        Set<Instrument> instrumentsSet = new HashSet<Instrument>(instruments);
+        user.setInstruments(instrumentsSet);
         userRepository.save(user);
         return user;
     }
 
-    public User setFavouriteGenres(List<Long> genreList)
+    public User setFavouriteGenres(User user, List<Long> genreList)
     {
         List<Genre> genres = genreRepository.findAllById(genreList);
+        Set<Genre> genreSet = new HashSet<Genre>(genres);
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        user.setFavoriteGenres(Set.copyOf(genres));
+        user.setFavoriteGenres(genreSet);
         userRepository.save(user);
         return user;
     }
 
-    public User editUser(String username, String password, String bio)
+    public User editUser(User user, String username, String password, String bio)
     {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         if(username != null)
         {
             validateUsername(username);

@@ -4,6 +4,8 @@ import com.vangelis.domain.User;
 import com.vangelis.doms.GenreListDom;
 import com.vangelis.doms.InstrumentListDom;
 import com.vangelis.doms.UserDom;
+import com.vangelis.security.jwt.JwtTokenUtil;
+import com.vangelis.service.JwtUserDetailsService;
 import com.vangelis.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -20,8 +23,10 @@ public class UserController
 {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    public UserController(UserService userService) {
+    private final JwtTokenUtil jwtTokenUtil;
+    public UserController(UserService userService, JwtTokenUtil jwtTokenUtil) {
         this.userService = userService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @GetMapping
@@ -42,11 +47,13 @@ public class UserController
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser()
+    public ResponseEntity<?> getCurrentUser(HttpServletRequest req)
     {
         try
         {
-            User user = userService.getCurrentUser();
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.getCurrentUser(userName);
             return ResponseEntity.ok(user);
         }
         catch(Exception e)
@@ -70,11 +77,13 @@ public class UserController
     }
 
     @PatchMapping("/avatars")
-    public ResponseEntity<?> setUserAvatar(@RequestParam("file") MultipartFile avatar)
+    public ResponseEntity<?> setUserAvatar(HttpServletRequest req, @RequestParam("file") MultipartFile avatar)
     {
         try
         {
-            User user = userService.setAvatar(avatar);
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.setAvatar(userService.getCurrentUser(userName), avatar);
 
             return ResponseEntity.ok(user);
         }
@@ -85,11 +94,13 @@ public class UserController
     }
 
     @PatchMapping("/instruments")
-    public ResponseEntity<?> addInstruments(@RequestBody InstrumentListDom instrumentList)
+    public ResponseEntity<?> addInstruments(HttpServletRequest req, @RequestBody InstrumentListDom instrumentList)
     {
         try
         {
-            User user = userService.setInstruments(instrumentList.getInstrumentList());
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.setInstruments(userService.getCurrentUser(userName), instrumentList.getInstrumentList());
 
             return ResponseEntity.ok(user);
         }
@@ -100,11 +111,13 @@ public class UserController
     }
 
     @PatchMapping("/genres")
-    public ResponseEntity<?> addGenresToFavourites(@RequestBody GenreListDom genreList)
+    public ResponseEntity<?> addGenresToFavourites(HttpServletRequest req, @RequestBody GenreListDom genreList)
     {
         try
         {
-            User user = userService.setFavouriteGenres(genreList.getGenres());
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.setFavouriteGenres(userService.getCurrentUser(userName), genreList.getGenres());
 
             return ResponseEntity.ok(user);
         }
@@ -115,11 +128,13 @@ public class UserController
     }
 
     @PatchMapping
-    public ResponseEntity<?> editUser(@RequestBody UserDom userDom)
+    public ResponseEntity<?> editUser(HttpServletRequest req, @RequestBody UserDom userDom)
     {
         try
         {
-            User user = userService.editUser(userDom.getUserName(), userDom.getPassword(), userDom.getBio());
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.editUser(userService.getCurrentUser(userName), userDom.getUserName(), userDom.getPassword(), userDom.getBio());
 
             return ResponseEntity.ok(user);
         }
