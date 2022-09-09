@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data @NoArgsConstructor @AllArgsConstructor
-public class InstrumentListDom
+public class StringListDom
 {
-    private List<Long> instrumentList;
+    private List<String> stringList;
 }

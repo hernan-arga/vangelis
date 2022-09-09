@@ -2,10 +2,9 @@ package com.vangelis.controller;
 
 import com.vangelis.domain.User;
 import com.vangelis.doms.GenreListDom;
-import com.vangelis.doms.InstrumentListDom;
+import com.vangelis.doms.LongListDom;
 import com.vangelis.doms.UserDom;
 import com.vangelis.security.jwt.JwtTokenUtil;
-import com.vangelis.service.JwtUserDetailsService;
 import com.vangelis.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,13 +93,13 @@ public class UserController
     }
 
     @PatchMapping("/instruments")
-    public ResponseEntity<?> addInstruments(HttpServletRequest req, @RequestBody InstrumentListDom instrumentList)
+    public ResponseEntity<?> addInstruments(HttpServletRequest req, @RequestBody LongListDom instrumentList)
     {
         try
         {
             String token = req.getHeader("Authorization").split(" ")[1];
             String userName = jwtTokenUtil.getUsernameFromToken(token);
-            User user = userService.setInstruments(userService.getCurrentUser(userName), instrumentList.getInstrumentList());
+            User user = userService.setInstruments(userService.getCurrentUser(userName), instrumentList.getLongList());
 
             return ResponseEntity.ok(user);
         }

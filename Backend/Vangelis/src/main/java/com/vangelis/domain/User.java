@@ -3,14 +3,12 @@ package com.vangelis.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.springframework.data.util.Pair;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "USERS")
@@ -49,11 +47,19 @@ public class User implements UserDetails
     @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.EAGER)
     private Set<Instrument> instruments;
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<MediaObject> videos;
+
     public User(String userName, String encodedPassword, String email)
     {
         this.userName = userName;
         this.password = encodedPassword;
         this.email = email;
+    }
+
+    public void addVideos(List<MediaObject> videos)
+    {
+        this.videos.addAll(videos);
     }
 
     @Override
