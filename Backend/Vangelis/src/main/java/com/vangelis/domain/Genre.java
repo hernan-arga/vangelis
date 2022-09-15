@@ -20,7 +20,6 @@ public class Genre
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonIgnore
     private Long id;
 
     @Column(name = "genre_name", nullable = false)

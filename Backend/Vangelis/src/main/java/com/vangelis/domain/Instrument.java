@@ -20,7 +20,6 @@ public class Instrument
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonIgnore
     private Long id;
 
     @Column(name = "instrument_name", nullable = false)

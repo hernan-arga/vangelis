@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,6 +43,14 @@ public class UserController
 
         List<User> users = userService.getAllUsers(instruments, genres, userName, page, limit);
 
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/favorites/{id}")
+    public ResponseEntity<List<User>> getFavoriteUsers(@PathVariable Long id)
+    {
+        List<User> users = new ArrayList<>();
+        users = userService.getFavoriteUsersOf(id);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
@@ -125,6 +134,23 @@ public class UserController
             return ResponseEntity.badRequest().body(e);
         }
     }
+    @PatchMapping("/favorites")
+    public ResponseEntity<?> addUserToFavorites(HttpServletRequest req, @RequestBody LongListDom favoriteList)
+    {
+        try
+        {
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.setFavouriteUsers(userService.getCurrentUser(userName), favoriteList.getLongList());
+
+            return ResponseEntity.ok(user);
+        }
+        catch(Exception e)
+        {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
 
     @PatchMapping
     public ResponseEntity<?> editUser(HttpServletRequest req, @RequestBody UserDom userDom)

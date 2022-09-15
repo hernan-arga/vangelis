@@ -3,7 +3,6 @@ package com.vangelis.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.springframework.data.util.Pair;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -49,6 +48,9 @@ public class User implements UserDetails
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<MediaObject> videos;
+
+    @ElementCollection
+    private List<Long> favorite_users = new ArrayList<>();
 
     public User(String userName, String encodedPassword, String email)
     {

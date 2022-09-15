@@ -23,4 +23,9 @@ public interface UserRepository extends JpaRepository<User, Long>
 
     @Query(value = "SELECT * FROM users WHERE user_name LIKE %:userName%", nativeQuery = true)
     Page<User> findAllByUserName(@Param("userName") String userName, Pageable pageable);
+
+    @Query(value = "SELECT * FROM users WHERE id IN :idList", nativeQuery = true)
+    List<User> findAllByIdList(@Param("idList") List<Long> idList);
+
+
 }

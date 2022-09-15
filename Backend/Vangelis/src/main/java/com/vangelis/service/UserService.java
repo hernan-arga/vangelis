@@ -58,6 +58,11 @@ public class UserService
         return userRepository.findById(id).orElseThrow();
     }
 
+    public List<User> getFavoriteUsersOf(Long id){
+        User user = getUser(id);
+        return userRepository.findAllByIdList(user.getFavorite_users());
+    }
+
     public User createUser(UserDom newUser) throws RuntimeException
     {
         if (newUser.getUserName() == null)
@@ -154,6 +159,13 @@ public class UserService
         Set<Genre> genreSet = new HashSet<Genre>(genres);
 
         user.setFavoriteGenres(genreSet);
+        userRepository.save(user);
+        return user;
+    }
+
+    public User setFavouriteUsers(User user, List<Long> userList)
+    {
+        user.setFavorite_users(userList);
         userRepository.save(user);
         return user;
     }
