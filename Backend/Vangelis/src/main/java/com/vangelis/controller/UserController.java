@@ -175,7 +175,7 @@ public class UserController
         {
             String token = req.getHeader("Authorization").split(" ")[1];
             String userName = jwtTokenUtil.getUsernameFromToken(token);
-            User user = userService.editUser(userService.getCurrentUser(userName), userDom.getUserName(), userDom.getPassword(), userDom.getBio());
+            User user = userService.editUser(userService.getCurrentUser(userName), userDom.getUserName(), userDom.getPassword(), userDom.getBio(), userDom.getUserPhone());
 
             return ResponseEntity.ok(user);
         }
