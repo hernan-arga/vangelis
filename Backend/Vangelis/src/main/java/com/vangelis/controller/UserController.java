@@ -1,6 +1,7 @@
 package com.vangelis.controller;
 
 import com.vangelis.domain.User;
+import com.vangelis.doms.BioDom;
 import com.vangelis.doms.GenreListDom;
 import com.vangelis.doms.LongListDom;
 import com.vangelis.doms.UserDom;
@@ -150,7 +151,22 @@ public class UserController
             return ResponseEntity.badRequest().body(e);
         }
     }
+    @PatchMapping("/description")
+    public ResponseEntity<?> updateBio(HttpServletRequest req, @RequestBody BioDom newBio)
+    {
+        try
+        {
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.updateBio(userService.getCurrentUser(userName), newBio.getBio());
 
+            return ResponseEntity.ok(user);
+        }
+        catch(Exception e)
+        {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
 
     @PatchMapping
     public ResponseEntity<?> editUser(HttpServletRequest req, @RequestBody UserDom userDom)

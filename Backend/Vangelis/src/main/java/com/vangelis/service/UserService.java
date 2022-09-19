@@ -169,6 +169,12 @@ public class UserService
         userRepository.save(user);
         return user;
     }
+    public User updateBio(User user, String newBio)
+    {
+        user.setBio(newBio);
+        userRepository.save(user);
+        return user;
+    }
 
     public User editUser(User user, String username, String password, String bio)
     {
