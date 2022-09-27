@@ -10,6 +10,7 @@ import com.vangelis.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -85,7 +86,7 @@ public class UserController
         }
     }
 
-    @PatchMapping("/avatars")
+    @RequestMapping(value = "/avatars", method = RequestMethod.PATCH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> setUserAvatar(HttpServletRequest req, @RequestParam("file") MultipartFile avatar)
     {
         try
