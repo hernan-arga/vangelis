@@ -13,9 +13,11 @@ public class UserDom
     private String userName;
     private String password;
     private String email;
+    private String userPhone;
     private String bio;
 
-    public UserDom(String userName, String password, String email) {
+    public UserDom(String userName, String password, String email)
+    {
         this.userName = userName;
         this.password = password;
         this.email = email;

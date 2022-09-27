@@ -176,7 +176,7 @@ public class UserService
         return user;
     }
 
-    public User editUser(User user, String username, String password, String bio)
+    public User editUser(User user, String username, String password, String bio, String phoneNumber)
     {
         if(username != null)
         {
@@ -193,6 +193,11 @@ public class UserService
         if(bio != null)
         {
             user.setBio(bio);
+        }
+
+        if(phoneNumber != null)
+        {
+            user.setPhoneNumber(phoneNumber);
         }
 
         userRepository.save(user);
