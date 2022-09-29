@@ -23,16 +23,6 @@ public class CollabResponse
     @Column(name = "id", nullable = false)
     private Long id;
 
-
-    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.EAGER)
-    private Set<Genre> genres;
-
-    @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.EAGER)
-    private Set<Instrument> instruments;
-
-    @Column(name = "description", length = 300)
-    private String description;
-
     @ManyToOne
     private User user;
 
@@ -47,4 +37,8 @@ public class CollabResponse
         return id != null && Objects.equals(id, user.id);
     }
 
+    public CollabResponse(User user, MediaObject media) {
+        this.user = user;
+        this.media = media;
+    }
 }

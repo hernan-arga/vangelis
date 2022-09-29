@@ -1,6 +1,7 @@
 package com.vangelis.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vangelis.doms.CollabResponseDom;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -56,5 +57,19 @@ public class Collaboration
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public Collaboration(String title, Set<Genre> genres, Set<Instrument> instruments, String description, User user, MediaObject media) {
+        this.title = title;
+        this.genres = genres;
+        this.instruments = instruments;
+        this.description = description;
+        this.user = user;
+        this.media = media;
+    }
+
+    public void addResponse(CollabResponse response)
+    {
+        this.responses.add(response);
     }
 }

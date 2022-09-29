@@ -1,9 +1,8 @@
 package com.vangelis.service;
 
-import com.vangelis.domain.Collaboration;
-import com.vangelis.domain.Genre;
-import com.vangelis.domain.Instrument;
-import com.vangelis.domain.User;
+import com.vangelis.domain.*;
+import com.vangelis.doms.CollabResponseDom;
+import com.vangelis.doms.CollaborationDom;
 import com.vangelis.doms.ErrorResponse;
 import com.vangelis.doms.UserDom;
 import com.vangelis.repository.CollabRepository;
@@ -77,6 +76,31 @@ public class CollabService
         collaboration.setGenres(genreSet);
         collabRepository.save(collaboration);
         return collaboration;
+    }
+
+    public boolean createCollaborationRequest(User user, String title, String description, Set<Long> genres, Set<Long> instruments, MediaObject mediaObject)
+    {
+        Set<Genre> genreList = Set.copyOf(genreRepository.findAllById(genres));
+        Set<Instrument> instrumentList = Set.copyOf(instrumentRepository.findAllById(instruments));
+
+        Collaboration collaboration = new Collaboration(title, genreList, instrumentList, description, user, mediaObject);
+
+        collabRepository.save(collaboration);
+
+        return true;
+    }
+
+    public boolean createCollaborationResponse(User user, Long collabId, MediaObject mediaObject)
+    {
+        Collaboration collaboration = collabRepository.findById(collabId).orElseThrow();
+
+        CollabResponse collabResponse = new CollabResponse(user, mediaObject);
+
+        collaboration.addResponse(collabResponse);
+
+        collabRepository.save(collaboration);
+
+        return true;
     }
 
 }

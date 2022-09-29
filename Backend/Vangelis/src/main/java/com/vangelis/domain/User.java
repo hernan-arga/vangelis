@@ -31,7 +31,7 @@ public class User implements UserDetails
     @Column(name = "user_email", nullable = false)
     private String email;
 
-    @Column(name = "user_phone", nullable = false)
+    @Column(name = "user_phone")
     private String phoneNumber;
 
     @Lob
