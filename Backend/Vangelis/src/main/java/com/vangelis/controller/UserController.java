@@ -169,6 +169,40 @@ public class UserController
         }
     }
 
+    @PatchMapping("/phonenumber")
+    public ResponseEntity<?> updatePhone(HttpServletRequest req, @RequestBody BioDom newPhone)
+    {
+        try
+        {
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.updatePhone(userService.getCurrentUser(userName), newPhone.getBio());
+
+            return ResponseEntity.ok(user);
+        }
+        catch(Exception e)
+        {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+    @PatchMapping("/email")
+    public ResponseEntity<?> updateEmail(HttpServletRequest req, @RequestBody BioDom newEmail)
+    {
+        try
+        {
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.updateEmail(userService.getCurrentUser(userName), newEmail.getBio());
+
+            return ResponseEntity.ok(user);
+        }
+        catch(Exception e)
+        {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
     @PatchMapping
     public ResponseEntity<?> editUser(HttpServletRequest req, @RequestBody UserDom userDom)
     {

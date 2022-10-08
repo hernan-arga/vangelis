@@ -176,6 +176,19 @@ public class UserService
         return user;
     }
 
+    public User updatePhone(User user, String newPhone)
+    {
+        user.setPhoneNumber(newPhone);
+        userRepository.save(user);
+        return user;
+    }
+    public User updateEmail(User user, String newEmail)
+    {
+        user.setEmail(newEmail);
+        userRepository.save(user);
+        return user;
+    }
+
     public User editUser(User user, String username, String password, String bio, String phoneNumber)
     {
         if(username != null)
