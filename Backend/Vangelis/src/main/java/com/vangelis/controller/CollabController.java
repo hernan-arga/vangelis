@@ -6,6 +6,7 @@ import com.vangelis.doms.CollaborationDom;
 import com.vangelis.doms.CollabResponseDom;
 import com.vangelis.security.jwt.JwtTokenUtil;
 import com.vangelis.service.CollabService;
+import com.vangelis.service.MediaService;
 import com.vangelis.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +24,14 @@ public class CollabController
     private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
 
-    public CollabController(CollabService collabService, JwtTokenUtil jwtTokenUtil, UserService userService)
+    private final MediaService mediaService;
+
+    public CollabController(CollabService collabService, JwtTokenUtil jwtTokenUtil, UserService userService, MediaService mediaService)
     {
         this.collabService = collabService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userService = userService;
+        this.mediaService = mediaService;
     }
 
     @GetMapping
@@ -77,13 +81,14 @@ public class CollabController
         {
             String token = req.getHeader("Authorization").split(" ")[1];
             String userName = jwtTokenUtil.getUsernameFromToken(token);
+            MediaObject mediaObject = new MediaObject(newCollab.getPlatform(), newCollab.getMediaUrl());
             boolean result = collabService.createCollaborationRequest(
                     userService.getCurrentUser(userName),
                     newCollab.getTitle(),
                     newCollab.getDescription(),
                     newCollab.getGenres(),
                     newCollab.getInstruments(),
-                    new MediaObject(newCollab.getPlatform(), newCollab.getMediaUrl()));
+                    mediaObject);
 
             return ResponseEntity.ok().build();
         }

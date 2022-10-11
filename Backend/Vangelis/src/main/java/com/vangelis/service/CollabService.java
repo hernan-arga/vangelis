@@ -5,10 +5,7 @@ import com.vangelis.doms.CollabResponseDom;
 import com.vangelis.doms.CollaborationDom;
 import com.vangelis.doms.ErrorResponse;
 import com.vangelis.doms.UserDom;
-import com.vangelis.repository.CollabRepository;
-import com.vangelis.repository.GenreRepository;
-import com.vangelis.repository.InstrumentRepository;
-import com.vangelis.repository.UserRepository;
+import com.vangelis.repository.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,13 +25,16 @@ public class CollabService
     private final InstrumentRepository instrumentRepository;
     private final GenreRepository genreRepository;
 
+    private final MediaRepository mediaRepository;
 
-    public CollabService(CollabRepository collabRepository,UserRepository userRepository, InstrumentRepository instrumentRepository, GenreRepository genreRepository)
+
+    public CollabService(CollabRepository collabRepository,UserRepository userRepository, InstrumentRepository instrumentRepository, GenreRepository genreRepository, MediaRepository mediaRepository)
     {
         this.collabRepository = collabRepository;
         this.userRepository = userRepository;
         this.instrumentRepository = instrumentRepository;
         this.genreRepository = genreRepository;
+        this.mediaRepository = mediaRepository;
     }
 
     public List<Collaboration> searchCollabs(List<Long> instruments, List<Long> genres, int page, int limit)
@@ -82,6 +82,13 @@ public class CollabService
     {
         Set<Genre> genreList = Set.copyOf(genreRepository.findAllById(genres));
         Set<Instrument> instrumentList = Set.copyOf(instrumentRepository.findAllById(instruments));
+
+        Optional<MediaObject> existingMedia = mediaRepository.getByMediaUrl(mediaObject.getMediaUrl());
+        if (existingMedia.isEmpty()){
+            mediaObject = mediaRepository.save(mediaObject);
+        }else{
+            mediaObject = existingMedia.get();
+        }
 
         Collaboration collaboration = new Collaboration(title, genreList, instrumentList, description, user, mediaObject);
 
