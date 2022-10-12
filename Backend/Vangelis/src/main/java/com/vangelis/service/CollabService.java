@@ -101,6 +101,13 @@ public class CollabService
     {
         Collaboration collaboration = collabRepository.findById(collabId).orElseThrow();
 
+        Optional<MediaObject> existingMedia = mediaRepository.getByMediaUrl(mediaObject.getMediaUrl());
+        if (existingMedia.isEmpty()){
+            mediaObject = mediaRepository.save(mediaObject);
+        }else{
+            mediaObject = existingMedia.get();
+        }
+
         CollabResponse collabResponse = new CollabResponse(user, mediaObject);
 
         collaboration.addResponse(collabResponse);

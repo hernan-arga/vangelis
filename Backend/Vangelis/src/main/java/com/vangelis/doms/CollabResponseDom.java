@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 public class CollabResponseDom
 {
     private String mediaUrl;
-    private MediaProvider mediaProvider;
+    private MediaProvider platform;
+    private double startTime;
 }

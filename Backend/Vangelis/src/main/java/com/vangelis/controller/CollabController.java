@@ -108,7 +108,7 @@ public class CollabController
             boolean result = collabService.createCollaborationResponse(
                     userService.getCurrentUser(userName),
                     id,
-                    new MediaObject(collabResponse.getMediaProvider(), collabResponse.getMediaUrl())
+                    new MediaObject(collabResponse.getPlatform(), collabResponse.getMediaUrl())
             );
             return ResponseEntity.ok().build();
         }
