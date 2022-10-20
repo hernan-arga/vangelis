@@ -6,6 +6,7 @@ import com.vangelis.doms.CollaborationDom;
 import com.vangelis.doms.ErrorResponse;
 import com.vangelis.doms.UserDom;
 import com.vangelis.repository.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,14 +38,29 @@ public class CollabService
         this.mediaRepository = mediaRepository;
     }
 
-    public List<Collaboration> searchCollabs(List<Long> instruments, List<Long> genres, int page, int limit)
+    public List<Collaboration> searchMyCollabs(List<Long> instruments, List<Long> genres, long currentUserId, int page, int limit)
     {
-        if(instruments == null && genres == null) return collabRepository.findAll();
+        if(instruments == null && genres == null)
+            return collabRepository.findAll().stream()
+                    .filter(c -> c.getUser().getId()==currentUserId).toList();;
+        if(instruments == null) instruments = instrumentRepository.getAllIds();
+        if(genres == null) genres = genreRepository.getAllIds();
+        return collabRepository.findAllFiltered(instruments, genres,
+                PageRequest.of(page, limit)).getContent()
+                .stream().filter(c -> c.getUser().getId()==currentUserId).toList();
 
+    }
+    public List<Collaboration> searchCollabs(List<Long> instruments, List<Long> genres,long currentUserId, int page, int limit)
+    {
+        if(instruments == null && genres == null)
+            return collabRepository.findAll().stream()
+                    .filter(c->c.getUser().getId()!=currentUserId).toList();
         if(instruments == null) instruments = instrumentRepository.getAllIds();
         if(genres == null) genres = genreRepository.getAllIds();
 
-        return collabRepository.findAllFiltered(instruments, genres, PageRequest.of(page, limit)).getContent();
+        return collabRepository.findAllFiltered(instruments, genres,
+                PageRequest.of(page, limit)).getContent()
+                .stream().filter(c->c.getUser().getId()!=currentUserId).toList();
     }
 
 

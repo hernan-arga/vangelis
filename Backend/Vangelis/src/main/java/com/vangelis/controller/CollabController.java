@@ -61,7 +61,9 @@ public class CollabController
     }
     @GetMapping("/search")
     public ResponseEntity<List<Collaboration>> searchCollabs(
+            HttpServletRequest req,
             @RequestParam(value = "instruments", required = false) List<Long> instruments,
+            @RequestParam(value = "bringMyCollabs", required = true) boolean bringMyCollabs,
             @RequestParam(value = "genres", required = false) List<Long> genres,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "limit", required = false) Integer limit)
@@ -69,9 +71,15 @@ public class CollabController
         if(page == null) page = 0;
         if(limit == null) limit = 25;
 
-        List<Collaboration> collaborations = collabService.searchCollabs(instruments, genres, page, limit);
 
+        String token = req.getHeader("Authorization").split(" ")[1];
+        String userName = jwtTokenUtil.getUsernameFromToken(token);
+        long id = userService.getCurrentUser(userName).getId();
+        List<Collaboration> collaborations = bringMyCollabs?
+                collabService.searchMyCollabs(instruments, genres,id, page, limit)
+                : collabService.searchCollabs(instruments, genres,id, page, limit);
         return new ResponseEntity<>(collaborations, HttpStatus.OK);
+
     }
 
     @PostMapping
