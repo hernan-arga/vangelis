@@ -21,7 +21,7 @@ public interface CollabRepository extends JpaRepository<Collaboration, Long>
 
     Page<Collaboration> findAllByUserId(long id, Pageable pageable);
 
-    @Query(value = "SELECT * FROM collabs WHERE (id IN (SELECT collaboration_id FROM collabs_instruments WHERE instruments_id in :instruments)) AND (id IN (SELECT collaboration_id FROM collabs_genres WHERE favorite_genres_id in :genres))", nativeQuery = true)
+    @Query(value = "SELECT * FROM collabs WHERE (id IN (SELECT collaboration_id FROM collabs_instruments WHERE instruments_id in :instruments)) OR (id IN (SELECT collaboration_id FROM collabs_genres WHERE genres_id in :genres))", nativeQuery = true)
     Page<Collaboration> findAllFiltered(@Param("instruments") List<Long> instruments, @Param("genres") List<Long> genres, Pageable pageable);
 
 }
