@@ -144,6 +144,17 @@ public class UserService
         return user;
     }
 
+    public User uploadPhoto(User user, MultipartFile photo) throws IOException
+    {
+        if (photo.isEmpty()) throw new ErrorResponse("U008", "Bad Request", "Photo must not be empty", new Date());
+
+        user.addPhoto(photo.getBytes());
+
+        userRepository.save(user);
+
+        return user;
+    }
+
     public User setInstruments(User user, List<Long> instrumentList)
     {
         List<Instrument> instruments = instrumentRepository.findAllById(instrumentList);

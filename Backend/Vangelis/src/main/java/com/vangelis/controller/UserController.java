@@ -86,6 +86,23 @@ public class UserController
         }
     }
 
+    @RequestMapping(value = "/photo", method = RequestMethod.PATCH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadPhoto(HttpServletRequest req, @RequestParam("file") MultipartFile photo)
+    {
+        try
+        {
+            String token = req.getHeader("Authorization").split(" ")[1];
+            String userName = jwtTokenUtil.getUsernameFromToken(token);
+            User user = userService.uploadPhoto(userService.getCurrentUser(userName), photo);
+
+            return ResponseEntity.ok(user);
+        }
+        catch(Exception e)
+        {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
     @RequestMapping(value = "/avatars", method = RequestMethod.PATCH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> setUserAvatar(HttpServletRequest req, @RequestParam("file") MultipartFile avatar)
     {

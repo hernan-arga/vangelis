@@ -48,7 +48,9 @@ public class User implements UserDetails
 
     @ManyToMany(targetEntity = Instrument.class, fetch = FetchType.EAGER)
     private Set<Instrument> instruments;
-
+    @MapKeyColumn(columnDefinition="BLOB NOT NULL")
+    @ElementCollection
+    public Set<byte[]> photos;
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<MediaObject> videos;
 
@@ -60,6 +62,11 @@ public class User implements UserDetails
         this.userName = userName;
         this.password = encodedPassword;
         this.email = email;
+    }
+
+    public void addPhoto(byte[] photo)
+    {
+        this.photos.add(photo);
     }
 
     public void addVideos(List<MediaObject> videos)
