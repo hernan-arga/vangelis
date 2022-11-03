@@ -37,6 +37,9 @@ public class Collaboration
     @Column(name = "description", length = 300)
     private String description;
 
+    @Column(nullable = true)
+    private boolean isOpen;
+
     @ManyToOne
     private User user;
 

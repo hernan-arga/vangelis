@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 public class CollabService
 {
     private final CollabRepository collabRepository;
+    private final ResponseRepository responseRepository;
     private final UserRepository userRepository;
     private final InstrumentRepository instrumentRepository;
     private final GenreRepository genreRepository;
@@ -29,13 +30,16 @@ public class CollabService
     private final MediaRepository mediaRepository;
 
 
-    public CollabService(CollabRepository collabRepository,UserRepository userRepository, InstrumentRepository instrumentRepository, GenreRepository genreRepository, MediaRepository mediaRepository)
+    public CollabService(CollabRepository collabRepository,UserRepository userRepository,
+                         InstrumentRepository instrumentRepository, GenreRepository genreRepository,
+                         MediaRepository mediaRepository, ResponseRepository responseRepository)
     {
         this.collabRepository = collabRepository;
         this.userRepository = userRepository;
         this.instrumentRepository = instrumentRepository;
         this.genreRepository = genreRepository;
         this.mediaRepository = mediaRepository;
+        this.responseRepository = responseRepository;
     }
 
     public List<Collaboration> searchMyCollabs(List<Long> instruments, List<Long> genres, long currentUserId, int page, int limit)
@@ -129,6 +133,19 @@ public class CollabService
         collaboration.addResponse(collabResponse);
 
         collabRepository.save(collaboration);
+
+        return true;
+    }
+
+    public boolean chooseCollabWinner(long collabId, long responseId){
+        Collaboration collaboration = collabRepository.findById(collabId).orElseThrow();
+        CollabResponse response = responseRepository.findById(responseId).orElseThrow();
+
+        collaboration.setOpen(false);
+        response.setWinner(true);
+
+        collabRepository.save(collaboration);
+        responseRepository.save(response);
 
         return true;
     }

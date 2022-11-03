@@ -28,6 +28,9 @@ public class CollabResponse
 
     private double startTime;
 
+    @Column(nullable = true)
+    private boolean isWinner;
+
     @ManyToOne
     private User user;
 

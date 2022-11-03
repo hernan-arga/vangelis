@@ -2,6 +2,8 @@ package com.vangelis.controller;
 
 import com.vangelis.domain.Collaboration;
 import com.vangelis.domain.MediaObject;
+import com.vangelis.doms.BioDom;
+import com.vangelis.doms.CollabWInnerDom;
 import com.vangelis.doms.CollaborationDom;
 import com.vangelis.doms.CollabResponseDom;
 import com.vangelis.security.jwt.JwtTokenUtil;
@@ -122,6 +124,17 @@ public class CollabController
         }
         catch(Exception e)
         {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+    @PostMapping("/winner")
+    public ResponseEntity<?> chooseCollabWinner(@RequestBody CollabWInnerDom ids){
+        try{
+            collabService.chooseCollabWinner(ids.getCollabId(),ids.getResponseId());
+            return ResponseEntity.ok().build();
+        }
+        catch (Exception e){
             return ResponseEntity.badRequest().body(e);
         }
     }
