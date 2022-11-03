@@ -68,9 +68,19 @@ public class User implements UserDetails
         this.photos.add(new Photo(image));
     }
 
+    public void removePhoto(long photoId)
+    {
+        this.photos.removeIf(photo -> photo.getId().equals(photoId));
+    }
+
     public void addVideos(List<MediaObject> videos)
     {
         this.videos.addAll(videos);
+    }
+
+    public void removeVideo(long videoId)
+    {
+        this.videos.removeIf(video -> video.getId().equals(videoId));
     }
 
     @Override

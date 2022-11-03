@@ -3,6 +3,7 @@ package com.vangelis.service;
 import com.vangelis.domain.MediaObject;
 import com.vangelis.domain.MediaProvider;
 import com.vangelis.domain.User;
+import com.vangelis.repository.MediaRepository;
 import com.vangelis.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,13 @@ public class MediaService
         user.addVideos(mediaObjects);
         userRepository.save(user);
 
+        return user;
+    }
+    public User removeVideoFromUser(String userName, long videoId)
+    {
+        User user = getCurrentUser(userName);
+        user.removeVideo(videoId);
+        userRepository.save(user);
         return user;
     }
 }

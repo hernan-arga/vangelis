@@ -143,7 +143,6 @@ public class UserService
 
         return user;
     }
-
     public User uploadPhoto(User user, MultipartFile photo) throws IOException
     {
         if (photo.isEmpty()) throw new ErrorResponse("U008", "Bad Request", "Photo must not be empty", new Date());
@@ -152,6 +151,14 @@ public class UserService
 
         userRepository.save(user);
 
+        return user;
+    }
+
+    public User removePhotoFromUser(String userName, long photoId)
+    {
+        User user = getCurrentUser(userName);
+        user.removePhoto(photoId);
+        userRepository.save(user);
         return user;
     }
 

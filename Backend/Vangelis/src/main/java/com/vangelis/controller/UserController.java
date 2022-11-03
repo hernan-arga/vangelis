@@ -103,6 +103,22 @@ public class UserController
         }
     }
 
+    @PostMapping("/removePhoto")
+    public ResponseEntity<?> RemovePhoto(HttpServletRequest req,
+                                                 @RequestBody BioDom idToRemove)
+    {
+        String token = req.getHeader("Authorization").split(" ")[1];
+        String userName = jwtTokenUtil.getUsernameFromToken(token);
+        try
+        {
+            User user = userService.removePhotoFromUser(userName, Long.parseLong(idToRemove.getBio()));
+            return ResponseEntity.ok(user);
+        }catch (Exception e)
+        {
+            return ResponseEntity.internalServerError().body(e);
+        }
+    }
+
     @RequestMapping(value = "/avatars", method = RequestMethod.PATCH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> setUserAvatar(HttpServletRequest req, @RequestParam("file") MultipartFile avatar)
     {
