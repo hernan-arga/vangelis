@@ -1,7 +1,6 @@
 package com.vangelis.controller;
 
-import com.vangelis.domain.Collaboration;
-import com.vangelis.domain.MediaObject;
+import com.vangelis.domain.*;
 import com.vangelis.doms.BioDom;
 import com.vangelis.doms.CollabWInnerDom;
 import com.vangelis.doms.CollaborationDom;
@@ -15,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -76,10 +77,51 @@ public class CollabController
 
         String token = req.getHeader("Authorization").split(" ")[1];
         String userName = jwtTokenUtil.getUsernameFromToken(token);
-        long id = userService.getCurrentUser(userName).getId();
+        User user = userService.getCurrentUser(userName);
+        long id = user.getId();
         List<Collaboration> collaborations = bringMyCollabs?
                 collabService.searchMyCollabs(instruments, genres,id, page, limit)
                 : collabService.searchCollabs(instruments, genres,id, page, limit);
+
+
+        if(bringMyCollabs)
+        {
+            //todo: ver si ordenamos las responses
+        }
+        else {
+            collaborations.sort(new Comparator<Collaboration>() {
+                @Override
+                public int compare(Collaboration col1, Collaboration col2) {
+                    List<Instrument> instrumentsInCommon1 = col1
+                            .getInstruments().stream()
+                            .filter(instrument -> user.getInstruments()
+                                    .contains(instrument)).toList();
+                    List<Instrument> instrumentsInCommon2 = col2
+                            .getInstruments().stream()
+                            .filter(instrument -> user.getInstruments()
+                                    .contains(instrument)).toList();
+                    List<Genre> genresInCommon1 = col1
+                            .getGenres().stream()
+                            .filter(genre -> user.getFavoriteGenres()
+                                    .contains(genre)).toList();
+                    List<Genre> genresInCommon2 = col2
+                            .getGenres().stream()
+                            .filter(genre -> user.getFavoriteGenres()
+                                    .contains(genre)).toList();
+
+                    int val1 = instrumentsInCommon1.size() + genresInCommon1.size();
+                    int val2 = genresInCommon2.size() + instrumentsInCommon2.size();
+
+                    if (val1 == val2)
+                        return 0;
+                    else if (val1 < val2)
+                        return 1;
+                    else //if(val1 > val2)
+                        return -1;
+                }
+            });
+        }
+
         return new ResponseEntity<>(collaborations, HttpStatus.OK);
 
     }

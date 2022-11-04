@@ -17,6 +17,7 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class CollabService
@@ -46,25 +47,25 @@ public class CollabService
     {
         if(instruments == null && genres == null)
             return collabRepository.findAll().stream()
-                    .filter(c -> c.getUser().getId()==currentUserId).toList();;
+                    .filter(c -> c.getUser().getId()==currentUserId).collect(Collectors.toList());
         if(instruments == null) instruments = instrumentRepository.getAllIds();
         if(genres == null) genres = genreRepository.getAllIds();
         return collabRepository.findAllFiltered(instruments, genres,
                 PageRequest.of(page, limit)).getContent()
-                .stream().filter(c -> c.getUser().getId()==currentUserId).toList();
+                .stream().filter(c -> c.getUser().getId()==currentUserId).collect(Collectors.toList());
 
     }
     public List<Collaboration> searchCollabs(List<Long> instruments, List<Long> genres,long currentUserId, int page, int limit)
     {
         if(instruments == null && genres == null)
             return collabRepository.findAll().stream()
-                    .filter(c->c.getUser().getId()!=currentUserId).toList();
+                    .filter(c->c.getUser().getId()!=currentUserId).collect(Collectors.toList());
         if(instruments == null) instruments = instrumentRepository.getAllIds();
         if(genres == null) genres = genreRepository.getAllIds();
 
         return collabRepository.findAllFiltered(instruments, genres,
                 PageRequest.of(page, limit)).getContent()
-                .stream().filter(c->c.getUser().getId()!=currentUserId).toList();
+                .stream().filter(c->c.getUser().getId()!=currentUserId).collect(Collectors.toList());
     }
 
 

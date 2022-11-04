@@ -1,5 +1,7 @@
 package com.vangelis.controller;
 
+import com.vangelis.domain.Genre;
+import com.vangelis.domain.Instrument;
 import com.vangelis.domain.User;
 import com.vangelis.doms.BioDom;
 import com.vangelis.doms.GenreListDom;
@@ -17,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -33,6 +37,7 @@ public class UserController
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers(
+            HttpServletRequest req,
             @RequestParam(value = "instruments", required = false) List<Long> instruments,
             @RequestParam(value = "genres", required = false) List<Long> genres,
             @RequestParam(value = "username", required = false) String userName,
@@ -43,7 +48,43 @@ public class UserController
         if(limit == null) limit = 25;
         if(userName == null) userName = "";
 
+        String token = req.getHeader("Authorization").split(" ")[1];
+        String currentUserName = jwtTokenUtil.getUsernameFromToken(token);
+        User user = userService.getCurrentUser(currentUserName);
+
         List<User> users = userService.getAllUsers(instruments, genres, userName, page, limit);
+        users = users.stream().filter(user1 -> user1.getId() != user.getId()).collect(Collectors.toList());
+        users.sort(new Comparator<User>() {
+            @Override
+            public int compare(User user1, User user2) {
+                List<Instrument> instrumentsInCommon1 = user1
+                        .getInstruments().stream()
+                        .filter(instrument -> user.getInstruments()
+                                .contains(instrument)).toList();
+                List<Instrument> instrumentsInCommon2 = user2
+                        .getInstruments().stream()
+                        .filter(instrument -> user.getInstruments()
+                                .contains(instrument)).toList();
+                List<Genre> genresInCommon1 = user1
+                        .getFavoriteGenres().stream()
+                        .filter(genre -> user.getFavoriteGenres()
+                                .contains(genre)).toList();
+                List<Genre> genresInCommon2 = user2
+                        .getFavoriteGenres().stream()
+                        .filter(genre -> user.getFavoriteGenres()
+                                .contains(genre)).toList();
+
+                int val1 = instrumentsInCommon1.size() + genresInCommon1.size();
+                int val2 = genresInCommon2.size() + instrumentsInCommon2.size();
+
+                if (val1 == val2)
+                    return 0;
+                else if (val1 < val2)
+                    return 1;
+                else //if(val1 > val2)
+                    return -1;
+            }
+        });
 
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
