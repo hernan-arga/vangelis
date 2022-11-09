@@ -68,6 +68,10 @@ public class CollabService
                 .stream().filter(c->c.getUser().getId()!=currentUserId).collect(Collectors.toList());
     }
 
+    public List<Collaboration> getCollabsUserResponded(Long userId){
+        return collabRepository.findCollabsUserResponded(userId);
+    }
+
 
     public Collaboration getCollab(Long id)
     {
