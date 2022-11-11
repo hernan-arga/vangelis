@@ -69,6 +69,7 @@ public class Collaboration
         this.description = description;
         this.user = user;
         this.media = media;
+        this.isOpen = true;
     }
 
     public void addResponse(CollabResponse response)

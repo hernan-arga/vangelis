@@ -43,6 +43,14 @@ public class CollabService
         this.responseRepository = responseRepository;
     }
 
+    public List<Collaboration> searchMyClosedCollabs(long currentUserId)
+    {
+        return collabRepository.findAll().stream()
+            .filter(c ->
+                    (c.getUser().getId()==currentUserId || c.getResponses().stream().anyMatch(r -> r.getUser().getId()==currentUserId && r.isWinner()))
+                            && !c.isOpen()).collect(Collectors.toList());
+    }
+
     public List<Collaboration> searchMyCollabs(List<Long> instruments, List<Long> genres, long currentUserId, int page, int limit)
     {
         if(instruments == null && genres == null)
@@ -126,7 +134,7 @@ public class CollabService
     {
         Collaboration collaboration = collabRepository.findById(collabId).orElseThrow();
 
-        Optional<MediaObject> existingMedia = mediaRepository.getByMediaUrl(mediaObject.getMediaUrl());
+        Optional<MediaObject> existingMedia = mediaRepository.getByMediaUrl(mediaObject.getMediaUrl()).stream().findFirst();
         if (existingMedia.isEmpty()){
             mediaObject = mediaRepository.save(mediaObject);
         }else{

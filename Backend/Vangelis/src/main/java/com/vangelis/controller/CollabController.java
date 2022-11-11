@@ -75,6 +75,23 @@ public class CollabController
 
         return new ResponseEntity<>(collaborations, HttpStatus.OK);
     }
+
+    @GetMapping("/myclosedcollabs")
+    public ResponseEntity<?> getClosedCollabs(HttpServletRequest req)
+    {
+        String token = req.getHeader("Authorization").split(" ")[1];
+        String userName = jwtTokenUtil.getUsernameFromToken(token);
+        User user = userService.getCurrentUser(userName);
+        long id = user.getId();
+        try
+        {
+            List<Collaboration> collaborations = collabService.searchMyClosedCollabs(id);
+            return new ResponseEntity<>(collaborations, HttpStatus.OK);
+        }catch (Exception e)
+        {
+            return new ResponseEntity<>(e, HttpStatus.NOT_FOUND);
+        }
+    }
     @GetMapping("/search")
     public ResponseEntity<List<Collaboration>> searchCollabs(
             HttpServletRequest req,
