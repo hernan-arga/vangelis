@@ -38,7 +38,7 @@ public class Collaboration
     private String description;
 
     @Column(nullable = true)
-    private boolean isOpen;
+    private boolean isOpen = true;
 
     @ManyToOne
     private User user;
